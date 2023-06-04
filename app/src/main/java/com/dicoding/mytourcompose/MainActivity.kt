@@ -7,7 +7,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.dicoding.mytourcompose.model.Tour
+import com.dicoding.mytourcompose.ui.HomeScreen
 import com.dicoding.mytourcompose.ui.detail.DetailScreen
 import com.dicoding.mytourcompose.ui.theme.MyTourComposeTheme
 
@@ -21,7 +25,15 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    TourApp()
+                    val navController = rememberNavController()
+                    NavHost(navController, startDestination = "home") {
+                        composable("home") { HomeScreen(navController = navController) }
+                        composable("home/{tourId}") { backStackEntry ->
+                            val tourId = backStackEntry.arguments?.getString("tourId")?.toInt()
+                            DetailScreen(tourId = tourId, navController = navController)
+                        }
+
+                    }
                 }
             }
         }

@@ -29,21 +29,25 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.dicoding.mytourcompose.TourApp
 import com.dicoding.mytourcompose.model.Tour
+import com.dicoding.mytourcompose.model.TourData
 import com.dicoding.mytourcompose.ui.theme.MyTourComposeTheme
+@Composable
+fun DetailScreen(
+    tourId: Int?, // change String? to Int?
+    navController: NavHostController,
+) {
+    val tour = TourData.tourList.find { it.tourId == tourId }
 
-class DetailScreen : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            MyTourComposeTheme {
-                DetailContent(
-                    tourName = "",
-                    alamat = "",
-                    deskripsi = "",
-                    image = 0,
-                    onBackClick = { /*TODO*/ })
-            }
-        }
+    if (tour != null) {
+        DetailContent(
+            tourName = tour.tourName,
+            alamat = tour.alamat,
+            deskripsi = tour.deskripsi,
+            image = tour.image,
+            onBackClick = { navController.popBackStack() }
+        )
+    } else {
+        // Show error or navigate back
     }
 }
 

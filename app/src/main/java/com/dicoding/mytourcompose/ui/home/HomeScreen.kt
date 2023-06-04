@@ -19,15 +19,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import coil.compose.rememberImagePainter
 import com.dicoding.mytourcompose.model.Tour
 import com.dicoding.mytourcompose.model.TourData
+import com.dicoding.mytourcompose.ui.navigation.Screen
 import com.dicoding.mytourcompose.ui.theme.MyTourComposeTheme
 
 @Composable
-fun HomeScreen(
-    modifier: Modifier = Modifier,
-) {
+fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) {
     Box(modifier = modifier) {
         LazyColumn {
             items(TourData.tourList, key = { it.tourId }) { tour ->
@@ -36,7 +38,8 @@ fun HomeScreen(
                     alamat = tour.alamat,
                     image = tour.image,
                     deskripsi = tour.deskripsi,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { navController.navigate(Screen.DetailTour.createRoute(tour.tourId)) }
                 )
             }
         }
@@ -49,7 +52,8 @@ fun TourListItem(
     alamat: String,
     deskripsi: String,
     image: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -61,10 +65,11 @@ fun TourListItem(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier.clickable {}
+            modifier = modifier.clickable { onClick() }
         ) {
-            AsyncImage(
-                model = image,
+            val painter = rememberImagePainter(image)
+            androidx.compose.foundation.Image(
+                painter = painter,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -91,14 +96,14 @@ fun TourListItem(
         }
     }
 }
-
-    @Preview(showBackground = true)
-    @Composable
-    fun TourListItemPreview() {
-        MyTourComposeTheme {
-            HomeScreen()
-        }
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    MyTourComposeTheme {
+        val navController = rememberNavController()
+        HomeScreen(navController = navController)
     }
+}
 
 //@Preview(showBackground = true)
 //@Composable

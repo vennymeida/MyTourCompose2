@@ -1,6 +1,5 @@
 package com.dicoding.mytourcompose
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -21,20 +20,13 @@ import androidx.navigation.compose.composable
 import com.dicoding.mytourcompose.ui.HomeScreen
 import com.dicoding.mytourcompose.ui.about.AboutScreen
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.navArgument
-import com.dicoding.mytourcompose.model.Tour
-import com.dicoding.mytourcompose.model.TourData
-import com.dicoding.mytourcompose.ui.TourListItem
 import com.dicoding.mytourcompose.ui.detail.DetailScreen
-
 
 @Composable
 fun TourApp(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController(),
 ) {
     Scaffold(
         bottomBar = {
@@ -48,15 +40,22 @@ fun TourApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) {
-                HomeScreen()
+                HomeScreen(navController)
             }
             composable(Screen.About.route) {
                 AboutScreen()
             }
+            composable(Screen.DetailTour.route) { backStackEntry ->
+                val tourId = backStackEntry.arguments?.getString("tourId")?.toIntOrNull()
+                if (tourId != null) {
+                    DetailScreen(tourId = tourId, navController = navController)
+                } else {
+                    // handle error or navigate to a default screen
+                }
+            }
         }
     }
 }
-
 
 @Composable
 private fun BottomBar(
@@ -106,10 +105,11 @@ private fun BottomBar(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun TourAppPreview() {
-//    MyTourComposeTheme {
-//        TourApp()
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun TourAppPreview() {
+    MyTourComposeTheme {
+        val navController = rememberNavController()
+        TourApp(navController = navController)
+    }
+}
